@@ -55,12 +55,12 @@ const SignIn = () => {
           onChange={handleChange}
         />
         <button
-          disabled={loading === "success"}
+          disabled={loading === "pending"}
           className={
             "bg-slate-700 text-white p-3 rounded-xl uppercase hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
           }
         >
-          {loading === "success" ? "Loading..." : "Success"}
+          {loading === "pending" ? "Loading..." : "Success"}
         </button>
       </form>
 

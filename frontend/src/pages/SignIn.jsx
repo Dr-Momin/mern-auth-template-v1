@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { signInUser, userReducer } from "../store/userSlice.js";
+import OAuth from "../components/OAuth.jsx";
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -30,8 +31,6 @@ const SignIn = () => {
       console.log(error.message);
     }
   };
-
-  // console.log(currentUser);
 
   return (
     <div className={"mx-auto max-w-lg"}>
@@ -62,6 +61,8 @@ const SignIn = () => {
         >
           {loading === "pending" ? "Loading..." : "Success"}
         </button>
+
+        <OAuth />
       </form>
 
       <div className="flex gap-2 mt-5">

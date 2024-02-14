@@ -25,6 +25,25 @@ const signInUser = createAsyncThunk(
   },
 );
 
+const signInWithGoogle = createAsyncThunk(
+  "user/signInGoogle",
+  async (formData, thunkAPI) => {
+    const response = await fetch("/api/auth/google", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+      signal: thunkAPI.signal,
+    });
+    const data = await response.json();
+
+    if (!data) return null;
+
+    return data;
+  },
+);
+
 export const userSlice = createSlice({
   name: "user",
   initialState,
@@ -41,9 +60,21 @@ export const userSlice = createSlice({
       state.loading = "error";
       state.error = action.error.name;
     });
+
+    builder.addCase(signInWithGoogle.pending, (state) => {
+      state.loading = "pending";
+    });
+    builder.addCase(signInWithGoogle.fulfilled, (state, action) => {
+      state.loading = "success";
+      state.currentUser = action.payload.data;
+    });
+    builder.addCase(signInWithGoogle.rejected, (state, action) => {
+      state.loading = "error";
+      state.error = action.error.name;
+    });
   },
 });
 
 export const userReducer = (state) => state.user;
-export { signInUser };
+export { signInUser, signInWithGoogle };
 export default userSlice.reducer;

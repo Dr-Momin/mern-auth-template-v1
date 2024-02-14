@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 const initialState = {
   currentUser: null,
-  loading: "idle",
+  loading: false,
   error: "",
 };
 
@@ -56,26 +56,30 @@ export const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(signInUser.pending, (state) => {
-      state.loading = "pending";
+      state.loading = true;
+      state.error = "";
     });
     builder.addCase(signInUser.fulfilled, (state, action) => {
-      state.loading = "success";
+      state.loading = false;
       state.currentUser = action.payload.data;
+      state.error = "";
     });
     builder.addCase(signInUser.rejected, (state, action) => {
-      state.loading = "error";
+      state.loading = false;
       state.error = action.error.name;
     });
 
     builder.addCase(signInWithGoogle.pending, (state) => {
-      state.loading = "pending";
+      state.loading = false;
+      state.error = "";
     });
     builder.addCase(signInWithGoogle.fulfilled, (state, action) => {
-      state.loading = "success";
+      state.loading = false;
       state.currentUser = action.payload.data;
+      state.error = "";
     });
     builder.addCase(signInWithGoogle.rejected, (state, action) => {
-      state.loading = "error";
+      state.loading = false;
       state.error = action.error.name;
     });
   },

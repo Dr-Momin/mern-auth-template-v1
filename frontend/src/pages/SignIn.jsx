@@ -54,16 +54,17 @@ const SignIn = () => {
           onChange={handleChange}
         />
         <button
-          disabled={loading === "pending"}
+          type={"submit"}
+          disabled={loading}
           className={
             "bg-slate-700 text-white p-3 rounded-xl uppercase hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
           }
         >
-          {loading === "pending" ? "Loading..." : "Sign In With Email"}
+          {loading ? "Loading..." : "Sign In With Email"}
         </button>
-
-        <OAuth />
       </form>
+
+      <OAuth />
 
       <div className="flex gap-2 mt-5">
         <p>Don&apos;t have an Account? </p>

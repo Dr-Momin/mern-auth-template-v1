@@ -47,7 +47,13 @@ const signInWithGoogle = createAsyncThunk(
 export const userSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {},
+  reducers: {
+    signOut: (state) => {
+      state.currentUser = null;
+      state.loading = false;
+      state.error = "";
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(signInUser.pending, (state) => {
       state.loading = "pending";
@@ -77,4 +83,7 @@ export const userSlice = createSlice({
 
 export const userReducer = (state) => state.user;
 export { signInUser, signInWithGoogle };
+
+export const { signOut } = userSlice.actions;
+
 export default userSlice.reducer;

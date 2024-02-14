@@ -46,7 +46,7 @@ const SignIn = () => {
           onChange={handleChange}
         />
         <input
-          type="text"
+          type="password"
           placeholder={"Password"}
           id={"password"}
           name={"password"}
@@ -59,7 +59,7 @@ const SignIn = () => {
             "bg-slate-700 text-white p-3 rounded-xl uppercase hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
           }
         >
-          {loading === "pending" ? "Loading..." : "Success"}
+          {loading === "pending" ? "Loading..." : "Sign In With Email"}
         </button>
 
         <OAuth />

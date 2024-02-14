@@ -1,12 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  signInStart,
-  signInSuccess,
-  signInFailure,
-  userReducer,
-} from "../store/userSlice.js";
+import { signInUser, userReducer } from "../store/userSlice.js";
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -26,26 +21,13 @@ const SignIn = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      dispatch(signInStart());
-      const response = await fetch("/api/auth/signin", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-      const data = await response.json();
+      const user = await dispatch(signInUser(formData));
 
-      dispatch(signInSuccess(data));
-
-      if (!data || data.success === false) {
-        dispatch(signInFailure("Something Went Wrong"));
-        return;
-      }
+      console.log(user);
 
       navigate("/");
     } catch (error) {
-      dispatch(signInFailure(error.message));
+      console.log(error.message);
     }
   };
 
@@ -90,7 +72,7 @@ const SignIn = () => {
       </div>
 
       <p className={"mt-4 text-red-700"}>
-        {(error && error.message) || "Something Went Wrong."}
+        {error && (error.message || "Something Went Wrong.")}
       </p>
     </div>
   );

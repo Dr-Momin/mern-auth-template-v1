@@ -18,6 +18,6 @@ const userSchema = new mongoose.Schema(
     },
     // Profile picture will also be added here
   },
-  { timestamp: true },
+  { timestamps: true },
 );
 export const User = mongoose.model("User", userSchema);

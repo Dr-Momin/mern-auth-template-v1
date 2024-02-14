@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const SignUp = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -16,6 +17,7 @@ const SignUp = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
+      setError(false);
       setLoading(true);
       const response = await fetch("/api/auth/signup", {
         method: "POST",
@@ -32,7 +34,7 @@ const SignUp = () => {
         return;
       }
 
-      console.log(data);
+      navigate("/sign-in");
     } catch (e) {
       setLoading(false);
       setError(true);

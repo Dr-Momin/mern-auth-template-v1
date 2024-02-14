@@ -1,11 +1,20 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  signInStart,
+  signInSuccess,
+  signInFailure,
+  userReducer,
+} from "../store/userSlice.js";
 
 const SignIn = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const { loading, error } = useSelector(userReducer);
   const [formData, setFormData] = useState({});
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData({
@@ -17,8 +26,7 @@ const SignIn = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      setError(false);
-      setLoading(true);
+      dispatch(signInStart());
       const response = await fetch("/api/auth/signin", {
         method: "POST",
         headers: {
@@ -26,20 +34,22 @@ const SignIn = () => {
         },
         body: JSON.stringify(formData),
       });
-
       const data = await response.json();
 
+      dispatch(signInSuccess(data));
+
       if (!data || data.success === false) {
-        setError(true);
+        dispatch(signInFailure("Something Went Wrong"));
         return;
       }
 
       navigate("/");
-    } catch (e) {
-      setLoading(false);
-      setError(true);
+    } catch (error) {
+      dispatch(signInFailure(error.message));
     }
   };
+
+  // console.log(currentUser);
 
   return (
     <div className={"mx-auto max-w-lg"}>
@@ -63,12 +73,12 @@ const SignIn = () => {
           onChange={handleChange}
         />
         <button
-          disabled={loading}
+          disabled={loading === "success"}
           className={
             "bg-slate-700 text-white p-3 rounded-xl uppercase hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
           }
         >
-          {loading ? "Loading..." : "Success"}
+          {loading === "success" ? "Loading..." : "Success"}
         </button>
       </form>
 
@@ -79,7 +89,9 @@ const SignIn = () => {
         </Link>
       </div>
 
-      <p className={"mt-4 text-red-700"}>{error && "Something went wrong"}</p>
+      <p className={"mt-4 text-red-700"}>
+        {(error && error.message) || "Something Went Wrong."}
+      </p>
     </div>
   );
 };

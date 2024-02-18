@@ -44,16 +44,34 @@ const signInWithGoogle = createAsyncThunk(
   },
 );
 
+const signOut = createAsyncThunk("user/signOut", async () => {
+  try {
+    await fetch("/api/auth/signout");
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+const updateUser = createAsyncThunk("user/update", async (id, updatedData) => {
+  const response = await fetch(`/api/user/update/${id}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(updatedData),
+    // signal: thunkAPI.signal,
+  });
+  const data = await response.json();
+
+  if (!data) return null;
+
+  return data;
+});
+
 export const userSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {
-    signOut: (state) => {
-      state.currentUser = null;
-      state.loading = false;
-      state.error = "";
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder.addCase(signInUser.pending, (state) => {
       state.loading = true;
@@ -66,7 +84,7 @@ export const userSlice = createSlice({
     });
     builder.addCase(signInUser.rejected, (state, action) => {
       state.loading = false;
-      state.error = action.error.name;
+      state.error = action.error.message;
     });
 
     builder.addCase(signInWithGoogle.pending, (state) => {
@@ -80,14 +98,39 @@ export const userSlice = createSlice({
     });
     builder.addCase(signInWithGoogle.rejected, (state, action) => {
       state.loading = false;
-      state.error = action.error.name;
+      state.error = action.error.message;
+    });
+
+    builder.addCase(signOut.pending, (state) => {
+      state.loading = false;
+      state.error = "";
+    });
+    builder.addCase(signOut.fulfilled, (state) => {
+      state.loading = false;
+      state.currentUser = null;
+      state.error = "";
+    });
+    builder.addCase(signOut.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message;
+    });
+
+    builder.addCase(updateUser.pending, (state) => {
+      state.loading = true;
+      state.error = "";
+    });
+    builder.addCase(updateUser.fulfilled, (state, action) => {
+      state.loading = false;
+      state.currentUser = action.payload.data;
+    });
+    builder.addCase(updateUser.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message;
     });
   },
 });
 
 export const userReducer = (state) => state.user;
-export { signInUser, signInWithGoogle };
-
-export const { signOut } = userSlice.actions;
+export { signInUser, signInWithGoogle, signOut, updateUser };
 
 export default userSlice.reducer;

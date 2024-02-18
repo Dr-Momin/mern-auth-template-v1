@@ -7,8 +7,8 @@ const Header = () => {
   const { currentUser } = useSelector(userReducer);
   const dispatch = useDispatch();
 
-  const handleLogout = () => {
-    dispatch(signOut());
+  const handleLogout = async () => {
+    await dispatch(signOut());
     navigate("/");
   };
 
@@ -31,7 +31,8 @@ const Header = () => {
               <img
                 src={currentUser?.profilePicture}
                 alt="profile"
-                className={"h-8 w-8 rounded-full object-cover  "}
+                className={"h-8 w-8 rounded-full object-cover cursor-pointer"}
+                onClick={() => navigate("/profile")}
               />
 
               <button

@@ -25,6 +25,7 @@ const SignIn = () => {
       const user = await dispatch(signInUser(formData));
 
       console.log(user);
+      if (user.error) return;
 
       navigate("/");
     } catch (error) {

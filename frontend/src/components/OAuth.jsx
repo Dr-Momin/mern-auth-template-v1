@@ -1,18 +1,14 @@
-import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
-import { firebase } from "../firebase.js";
 import { useDispatch } from "react-redux";
-import { signInWithGoogle } from "../store/userSlice.js";
 import { useNavigate } from "react-router-dom";
+import { authService } from "../firebase/auth.service.js";
+import { signInWithGoogle } from "../store/userSlice.js";
 const OAuth = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleGoogleLogin = async () => {
     try {
-      const provider = new GoogleAuthProvider();
-      const auth = getAuth(firebase);
-
-      const result = await signInWithPopup(auth, provider);
-      await dispatch(
+      const result = await authService.loginWithGoogle();
+      dispatch(
         signInWithGoogle({
           name: result.user.displayName,
           email: result.user.email,

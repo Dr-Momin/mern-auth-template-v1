@@ -29,7 +29,6 @@ export const signin = asyncHandler(async (req, res) => {
   const token = jwt.sign(
     {
       id: validUser._id,
-      email: validUser.email,
     },
     process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_SECRET_EXPIRY },
@@ -37,13 +36,15 @@ export const signin = asyncHandler(async (req, res) => {
 
   const { password: hashedPassword, ...rest } = validUser._doc;
 
+  const expiryDate = new Date(Date.now() + 3600000); // 1 hour
+
   res
-    .cookie("access_token", token, { httpOnly: true })
+    .cookie("access_token", token, { httpOnly: true, expires: expiryDate })
     .status(200)
     .json(new ApiResponse(200, rest, "Successful Login"));
 });
 
-export const google = asyncHandler(async (req, res, next) => {
+export const google = asyncHandler(async (req, res) => {
   const { name, email, photo } = req.body;
 
   const validUser = await User.findOne({ email });
@@ -59,8 +60,12 @@ export const google = asyncHandler(async (req, res, next) => {
 
     const { password, ...rest } = validUser._doc;
 
+    const expiryDate = new Date(Date.now() + 3600000); // 1 hour
     res
-      .cookie("accessToken", token, { httpOnly: true })
+      .cookie("access_token", token, {
+        httpOnly: true,
+        expiresIn: process.env.JWT_SECRET_EXPIRY,
+      })
       .status(200)
       .json(new ApiResponse(200, rest, "Successful Login"));
   } else {
@@ -77,8 +82,19 @@ export const google = asyncHandler(async (req, res, next) => {
       throw new ApiError(400, "Something went wrong While registering User.");
     await newUser.save();
 
+    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
+    const expiryDate = new Date(Date.now() + 3600000); // 1 hour
+
     return res
+      .cookie("access_token", token, {
+        httpOnly: true,
+        expiresIn: process.env.JWT_SECRET_EXPIRY,
+      })
       .status(201)
       .json(new ApiResponse(200, newUser, "User Registered Successfully"));
   }
+});
+
+export const signout = asyncHandler(async (req, res) => {
+  res.clearCookie("access_token").status(200).json("Sign out Success");
 });

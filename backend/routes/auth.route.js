@@ -1,5 +1,10 @@
 import express from "express";
-import { google, signin, signup } from "../controllers/auth.controllers.js";
+import {
+  google,
+  signin,
+  signout,
+  signup,
+} from "../controllers/auth.controllers.js";
 const router = express.Router();
 
 router.get("/", (req, res) => {
@@ -9,5 +14,6 @@ router.get("/", (req, res) => {
 router.post("/signup", signup);
 router.post("/signin", signin);
 router.post("/google", google);
+router.get("/signout", signout);
 
 export { router };
